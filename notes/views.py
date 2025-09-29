@@ -15,7 +15,11 @@ class NoteViewSet(viewsets.ModelViewSet):
 @api_view(["GET", "POST"])
 def list_note_create(request):
     if request.method == "GET":
-        queryset = Notes.objects.all()
+        tag_query = request.GET.get('tags', None)
+        if tag_query:
+            queryset = Notes.objects.filter(tags__icontains=tag_query)
+        else:
+            queryset = Notes.objects.all()
         serializer = NoteSerializer(queryset, many=True)
         return Response(serializer.data)
     elif request.method == "POST":
